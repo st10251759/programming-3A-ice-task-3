@@ -1,0 +1,287 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Library Management System</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Ice_Task_3.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+        :root {
+            --primary-color: #2c3e50;       /* Deep blue/slate for main elements */
+            --secondary-color: #8e7c68;     /* Warm brown for accents */
+            --tertiary-color: #3d645c;      /* Muted green for secondary elements */
+            --light-color: #f5f5f0;         /* Off-white for backgrounds */
+            --accent-color: #b06c48;        /* Terracotta accent for buttons */
+        }
+
+        body {
+            background-color: var(--light-color);
+            font-family: 'Georgia', serif;
+            color: #333;
+        }
+
+        .navbar {
+            background-color: var(--primary-color) !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand, .nav-link {
+            color: white !important;
+            font-weight: 500;
+        }
+
+        .navbar-brand {
+            font-family: 'Times New Roman', serif;
+            font-size: 1.5rem;
+        }
+
+        .nav-link:hover {
+            color: #ddd !important;
+        }
+
+        .card {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: none;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: #1a2530;
+            border-color: #1a2530;
+        }
+
+        .btn-success {
+            background-color: var(--tertiary-color);
+            border-color: var(--tertiary-color);
+        }
+
+        .btn-success:hover {
+            background-color: #2a4b44;
+            border-color: #2a4b44;
+        }
+
+        .btn-danger {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .btn-danger:hover {
+            background-color: #8d5538;
+            border-color: #8d5538;
+        }
+
+        .btn-warning {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background-color: #705e4f;
+            border-color: #705e4f;
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #5a6268;
+        }
+
+        footer {
+            background-color: var(--primary-color);
+            color: white !important;
+            padding: 1.5rem 0;
+            margin-top: 2rem;
+        }
+
+        footer a {
+            color: #ddd !important;
+        }
+
+        .table {
+            background-color: white;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .table thead {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .display-4 {
+            color: var(--primary-color);
+            font-family: 'Times New Roman', serif;
+        }
+
+        /* Custom icon decoration */
+        .book-icon {
+            margin-right: 5px;
+            color: var(--accent-color);
+        }
+
+        /* Form styling */
+        .form-control {
+            border-radius: 0;
+            border: 1px solid #ddd;
+        }
+
+        .form-control:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.2rem rgba(142, 124, 104, 0.25);
+        }
+
+        /* Badge styling */
+        .badge {
+            font-weight: 500;
+            padding: 0.4em 0.6em;
+        }
+
+        /* Section headers */
+        h1, h2, h3 {
+            color: var(--primary-color);
+            font-family: 'Times New Roman', serif;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="fas fa-book-open book-icon"></i> Library Management System
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="fas fa-home"></i> Home
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Book" asp-action="Index">
+                                <i class="fas fa-book"></i> Books
+                            </a>
+                        </li>
+                        @if (TempData.ContainsKey("UserId"))
+                        {
+                            if (TempData["UserRole"].ToString() == "Admin" || TempData["UserRole"].ToString() == "Librarian")
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="User" asp-action="Index">
+                                        <i class="fas fa-users"></i> Users
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Transaction" asp-action="Index">
+                                        <i class="fas fa-exchange-alt"></i> Transactions
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Fine" asp-action="Index">
+                                        <i class="fas fa-money-bill-wave"></i> Fines
+                                    </a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Transaction" asp-action="UserTransactions" asp-route-id="@TempData["UserId"]">
+                                        <i class="fas fa-book-reader"></i> My Books
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Fine" asp-action="UserFines" asp-route-id="@TempData["UserId"]">
+                                        <i class="fas fa-receipt"></i> My Fines
+                                    </a>
+                                </li>
+                            }
+
+                            // Keep the TempData alive for next request
+                            TempData.Keep("UserId");
+                            TempData.Keep("UserName");
+                            TempData.Keep("UserRole");
+                        }
+                    </ul>
+                    <ul class="navbar-nav">
+                        @if (TempData.ContainsKey("UserId"))
+                        {
+                            <li class="nav-item">
+                                <span class="nav-link">
+                                    <i class="fas fa-user-circle"></i> Hello, @TempData["UserName"]!
+                                </span>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="User" asp-action="Logout">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </a>
+                            </li>
+
+                            // Keep the TempData alive for next request
+                            TempData.Keep("UserId");
+                            TempData.Keep("UserName");
+                            TempData.Keep("UserRole");
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="User" asp-action="Login">
+                                    <i class="fas fa-sign-in-alt"></i> Login
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="User" asp-action="Create">
+                                    <i class="fas fa-user-plus"></i> Register
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+    <footer class="border-top footer text-muted">
+        <div class="container text-center">
+            <span>&copy; 2025 - Library Management System - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a></span>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

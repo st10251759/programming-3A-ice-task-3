@@ -1,0 +1,82 @@
+﻿@model Ice_Task_3.Models.Transaction
+
+@{
+    ViewData["Title"] = "Transaction Details";
+}
+
+<h1>Transaction Details</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            Book Title
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Book.Title
+        </dd>
+        <dt class="col-sm-2">
+            Book Author
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Book.Author
+        </dd>
+        <dt class="col-sm-2">
+            Member
+        </dt>
+        <dd class="col-sm-10">
+            @Model.User.FirstName @Model.User.LastName
+        </dd>
+        <dt class="col-sm-2">
+            Borrow Date
+        </dt>
+        <dd class="col-sm-10">
+            @Model.BorrowDate.ToString("yyyy-MM-dd")
+        </dd>
+        <dt class="col-sm-2">
+            Due Date
+        </dt>
+        <dd class="col-sm-10">
+            @Model.DueDate.ToString("yyyy-MM-dd")
+        </dd>
+        <dt class="col-sm-2">
+            Return Date
+        </dt>
+        <dd class="col-sm-10">
+            @(Model.ReturnDate.HasValue ? Model.ReturnDate.Value.ToString("yyyy-MM-dd") : "-")
+        </dd>
+        <dt class="col-sm-2">
+            Status
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.IsReturned)
+            {
+                <span class="badge bg-success">Returned</span>
+            }
+            else if (Model.DueDate < DateTime.Now)
+            {
+                <span class="badge bg-danger">Overdue</span>
+            }
+            else
+            {
+                <span class="badge bg-primary">Borrowed</span>
+            }
+        </dd>
+        @if (!string.IsNullOrEmpty(Model.Notes))
+        {
+            <dt class="col-sm-2">
+                Notes
+            </dt>
+            <dd class="col-sm-10">
+                @Model.Notes
+            </dd>
+        }
+    </dl>
+</div>
+<div>
+    @if (!Model.IsReturned)
+    {
+        <a asp-action="Return" asp-route-id="@Model.Id" class="btn btn-primary">Return Book</a>
+    }
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>

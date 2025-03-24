@@ -1,0 +1,70 @@
+﻿@model Ice_Task_3.Models.Transaction
+
+@{
+    ViewData["Title"] = "Return Book";
+}
+
+<h1>Return Book</h1>
+
+<h3>Are you sure you want to return this book?</h3>
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            Book Title
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Book.Title
+        </dd>
+        <dt class="col-sm-2">
+            Book Author
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Book.Author
+        </dd>
+        <dt class="col-sm-2">
+            Member
+        </dt>
+        <dd class="col-sm-10">
+            @Model.User.FirstName @Model.User.LastName
+        </dd>
+        <dt class="col-sm-2">
+            Borrow Date
+        </dt>
+        <dd class="col-sm-10">
+            @Model.BorrowDate.ToString("yyyy-MM-dd")
+        </dd>
+        <dt class="col-sm-2">
+            Due Date
+        </dt>
+        <dd class="col-sm-10">
+            @Model.DueDate.ToString("yyyy-MM-dd")
+        </dd>
+        <dt class="col-sm-2">
+            Status
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.DueDate < DateTime.Now)
+            {
+                <span class="badge bg-danger">Overdue by @((DateTime.Now - Model.DueDate).Days) days</span>
+            }
+            else
+            {
+                <span class="badge bg-primary">Borrowed</span>
+            }
+        </dd>
+    </dl>
+
+    @if (Model.DueDate < DateTime.Now)
+    {
+        <div class="alert alert-warning">
+            <strong>Notice:</strong> This book is overdue. A fine will be automatically generated upon return.
+        </div>
+    }
+
+    <form asp-action="Return">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Confirm Return" class="btn btn-primary" />
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    </form>
+</div>

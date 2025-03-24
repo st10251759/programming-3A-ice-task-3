@@ -1,0 +1,64 @@
+﻿@model IEnumerable<Ice_Task_3.Models.Book>
+
+@{
+    ViewData["Title"] = "Search Results";
+}
+
+<h1>Search Results</h1>
+
+<div class="mb-3">
+    <a asp-action="Search" class="btn btn-primary">New Search</a>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        No books found matching your search criteria.
+    </div>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>ISBN</th>
+                <th>Publisher</th>
+                <th>Year</th>
+                <th>Category</th>
+                <th>Available</th>
+                <th>Quantity</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Title</td>
+                    <td>@item.Author</td>
+                    <td>@item.ISBN</td>
+                    <td>@item.Publisher</td>
+                    <td>@item.PublicationYear</td>
+                    <td>@item.Category</td>
+                    <td>@(item.IsAvailable ? "Yes" : "No")</td>
+                    <td>@item.Quantity</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">Details</a>
+                        @if (TempData.ContainsKey("UserId") && (TempData["UserRole"].ToString() == "Admin" || TempData["UserRole"].ToString() == "Librarian"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
+                        }
+                        @if (TempData.ContainsKey("UserId") && item.IsAvailable)
+                        {
+                            <a asp-controller="Transaction" asp-action="Borrow" asp-route-bookId="@item.Id" class="btn btn-success btn-sm">Borrow</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

@@ -1,0 +1,50 @@
+﻿@model Ice_Task_3.Models.Fine
+
+@{
+    ViewData["Title"] = "Pay Fine";
+}
+
+<h1>Pay Fine</h1>
+
+<h3>Are you sure you want to mark this fine as paid?</h3>
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            Member
+        </dt>
+        <dd class="col-sm-10">
+            @Model.User.FirstName @Model.User.LastName
+        </dd>
+        <dt class="col-sm-2">
+            Book
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Transaction.Book.Title
+        </dd>
+        <dt class="col-sm-2">
+            Amount
+        </dt>
+        <dd class="col-sm-10">
+            $@Model.Amount.ToString("F2")
+        </dd>
+        <dt class="col-sm-2">
+            Fine Date
+        </dt>
+        <dd class="col-sm-10">
+            @Model.FineDate.ToString("yyyy-MM-dd")
+        </dd>
+        <dt class="col-sm-2">
+            Reason
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Reason
+        </dd>
+    </dl>
+
+    <form asp-action="Pay">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Confirm Payment" class="btn btn-primary" />
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    </form>
+</div>

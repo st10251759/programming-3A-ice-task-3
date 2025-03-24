@@ -1,0 +1,127 @@
+﻿@model Ice_Task_3.Models.Book
+
+@{
+    ViewData["Title"] = "Book Details";
+}
+
+<div class="container py-4">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">Books</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Details</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h2 class="mb-0"><i class="fas fa-book"></i> Book Details</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="text-center p-4 bg-light rounded mb-3">
+                        <i class="fas fa-book fa-6x text-primary mb-3"></i>
+                        <div class="mt-3">
+                            <span class="badge bg-@(Model.IsAvailable ? "success" : "danger") p-2">
+                                <i class="fas fa-@(Model.IsAvailable ? "check" : "times")"></i>
+                                @(Model.IsAvailable ? "Available" : "Unavailable")
+                            </span>
+                        </div>
+                        <div class="mt-2">
+                            <span class="badge bg-secondary p-2">
+                                <i class="fas fa-list-ol"></i> Quantity: @Model.Quantity
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4">
+                        @if (TempData.ContainsKey("UserId") && (TempData["UserRole"].ToString() == "Admin" || TempData["UserRole"].ToString() == "Librarian"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                        }
+                        @if (TempData.ContainsKey("UserId") && Model.IsAvailable)
+                        {
+                            <a asp-controller="Transaction" asp-action="Borrow" asp-route-bookId="@Model.Id" class="btn btn-success">
+                                <i class="fas fa-hand-holding"></i> Borrow
+                            </a>
+                        }
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to List
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-md-8">
+                    <h3 class="mb-3">@Model.Title</h3>
+                    <hr />
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h5 class="text-muted"><i class="fas fa-user-edit"></i> Author</h5>
+                            <p class="lead">@Model.Author</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="text-muted"><i class="fas fa-tags"></i> Category</h5>
+                            <p class="lead">@Model.Category</p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h5 class="text-muted"><i class="fas fa-barcode"></i> ISBN</h5>
+                            <p>@(string.IsNullOrEmpty(Model.ISBN) ? "Not available" : Model.ISBN)</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="text-muted"><i class="fas fa-calendar-alt"></i> Publication Year</h5>
+                            <p>@Model.PublicationYear</p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <h5 class="text-muted"><i class="fas fa-building"></i> Publisher</h5>
+                            <p>@(string.IsNullOrEmpty(Model.Publisher) ? "Not available" : Model.Publisher)</p>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Description))
+                    {
+                        <div class="row mt-4">
+                            <div class="col-md-12">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><i class="fas fa-info-circle"></i> Description</h5>
+                                        <p class="card-text">@Model.Description</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="card-footer text-muted">
+            <div class="row">
+                <div class="col-md-6">
+                    <i class="fas fa-info-circle"></i> Book ID: #@Model.Id
+                </div>
+                <div class="col-md-6 text-end">
+                    <i class="fas fa-history"></i> Last Updated: @DateTime.Now.ToString("MMM dd, yyyy")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@{
+    // Keep the TempData alive for next request
+    if (TempData.ContainsKey("UserId"))
+    {
+        TempData.Keep("UserId");
+        TempData.Keep("UserName");
+        TempData.Keep("UserRole");
+    }
+}

@@ -1,0 +1,51 @@
+﻿@model IEnumerable<Ice_Task_3.Models.Transaction>
+
+@{
+    ViewData["Title"] = "Overdue Books";
+}
+
+<h1>Overdue Books</h1>
+
+<p>
+    <a asp-action="Index" class="btn btn-secondary">Back to All Transactions</a>
+</p>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-success">
+        <strong>Great!</strong> There are no overdue books at the moment.
+    </div>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Book</th>
+                <th>Member</th>
+                <th>Borrow Date</th>
+                <th>Due Date</th>
+                <th>Days Overdue</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Book.Title</td>
+                    <td>@item.User.FirstName @item.User.LastName</td>
+                    <td>@item.BorrowDate.ToShortDateString()</td>
+                    <td>@item.DueDate.ToShortDateString()</td>
+                    <td>
+                        <span class="badge bg-danger">@((DateTime.Now - item.DueDate).Days) days</span>
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">Details</a>
+                        <a asp-action="Return" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Return</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

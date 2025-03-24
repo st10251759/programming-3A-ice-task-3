@@ -1,0 +1,69 @@
+﻿@model Ice_Task_3.Models.Fine
+
+@{
+    ViewData["Title"] = "Fine Details";
+}
+
+<h1>Fine Details</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            Member
+        </dt>
+        <dd class="col-sm-10">
+            @Model.User.FirstName @Model.User.LastName
+        </dd>
+        <dt class="col-sm-2">
+            Book
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Transaction.Book.Title
+        </dd>
+        <dt class="col-sm-2">
+            Amount
+        </dt>
+        <dd class="col-sm-10">
+            $@Model.Amount.ToString("F2")
+        </dd>
+        <dt class="col-sm-2">
+            Fine Date
+        </dt>
+        <dd class="col-sm-10">
+            @Model.FineDate.ToString("yyyy-MM-dd")
+        </dd>
+        <dt class="col-sm-2">
+            Payment Date
+        </dt>
+        <dd class="col-sm-10">
+            @(Model.PaymentDate.HasValue ? Model.PaymentDate.Value.ToString("yyyy-MM-dd") : "-")
+        </dd>
+        <dt class="col-sm-2">
+            Status
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.IsPaid)
+            {
+                <span class="badge bg-success">Paid</span>
+            }
+            else
+            {
+                <span class="badge bg-danger">Unpaid</span>
+            }
+        </dd>
+        <dt class="col-sm-2">
+            Reason
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Reason
+        </dd>
+    </dl>
+</div>
+<div>
+    @if (!Model.IsPaid)
+    {
+        <a asp-action="Pay" asp-route-id="@Model.Id" class="btn btn-primary">Pay Fine</a>
+    }
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>

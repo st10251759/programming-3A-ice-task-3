@@ -1,0 +1,49 @@
+﻿@model IEnumerable<Ice_Task_3.Models.Fine>
+
+@{
+    ViewData["Title"] = "Unpaid Fines";
+}
+
+<h1>Unpaid Fines</h1>
+
+<p>
+    <a asp-action="Index" class="btn btn-secondary">Back to All Fines</a>
+</p>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-success">
+        <strong>Great!</strong> There are no unpaid fines at the moment.
+    </div>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Member</th>
+                <th>Book</th>
+                <th>Amount</th>
+                <th>Fine Date</th>
+                <th>Reason</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.User.FirstName @item.User.LastName</td>
+                    <td>@item.Transaction.Book.Title</td>
+                    <td>$@item.Amount.ToString("F2")</td>
+                    <td>@item.FineDate.ToShortDateString()</td>
+                    <td>@item.Reason</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">Details</a>
+                        <a asp-action="Pay" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Pay</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

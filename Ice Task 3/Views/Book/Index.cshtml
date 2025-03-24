@@ -1,0 +1,153 @@
+﻿@model IEnumerable<Ice_Task_3.Models.Book>
+
+@{
+    ViewData["Title"] = "Books Catalog";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-book"></i> Books Catalog</h1>
+    @if (TempData.ContainsKey("UserId") && (TempData["UserRole"].ToString() == "Admin" || TempData["UserRole"].ToString() == "Librarian"))
+    {
+        <a asp-action="Create" class="btn btn-success">
+            <i class="fas fa-plus"></i> Add New Book
+        </a>
+    }
+</div>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-header">
+        <h5><i class="fas fa-search"></i> Search Books</h5>
+    </div>
+    <div class="card-body">
+        <form asp-action="Search" method="post" class="row g-3">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <input type="text" name="searchString" class="form-control" placeholder="Enter title or author...">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="btn-group" role="group">
+                    <input type="radio" class="btn-check" name="searchBy" id="searchByTitle" value="title" checked autocomplete="off">
+                    <label class="btn btn-outline-secondary" for="searchByTitle">
+                        <i class="fas fa-heading"></i> Title
+                    </label>
+
+                    <input type="radio" class="btn-check" name="searchBy" id="searchByAuthor" value="author" autocomplete="off">
+                    <label class="btn btn-outline-secondary" for="searchByAuthor">
+                        <i class="fas fa-user-edit"></i> Author
+                    </label>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th><i class="fas fa-book"></i> Title</th>
+                        <th><i class="fas fa-user-edit"></i> Author</th>
+                        <th><i class="fas fa-barcode"></i> ISBN</th>
+                        <th><i class="fas fa-building"></i> Publisher</th>
+                        <th><i class="fas fa-calendar-alt"></i> Year</th>
+                        <th><i class="fas fa-tags"></i> Category</th>
+                        <th><i class="fas fa-check-circle"></i> Status</th>
+                        <th><i class="fas fa-list-ol"></i> Qty</th>
+                        <th><i class="fas fa-cogs"></i> Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Title</td>
+                                <td>@item.Author</td>
+                                <td>@item.ISBN</td>
+                                <td>@item.Publisher</td>
+                                <td>@item.PublicationYear</td>
+                                <td>@item.Category</td>
+                                <td>
+                                    @if (item.IsAvailable)
+                                    {
+                                        <span class="badge bg-success"><i class="fas fa-check"></i> Available</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger"><i class="fas fa-times"></i> Unavailable</span>
+                                    }
+                                </td>
+                                <td>@item.Quantity</td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info" data-bs-toggle="tooltip" title="View Details">
+                                            <i class="fas fa-info-circle"></i>
+                                        </a>
+                                        @if (TempData.ContainsKey("UserId") && (TempData["UserRole"].ToString() == "Admin" || TempData["UserRole"].ToString() == "Librarian"))
+                                        {
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger" data-bs-toggle="tooltip" title="Delete">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        }
+                                        @if (TempData.ContainsKey("UserId") && item.IsAvailable)
+                                        {
+                                            <a asp-controller="Transaction" asp-action="Borrow" asp-route-bookId="@item.Id" class="btn btn-sm btn-success" data-bs-toggle="tooltip" title="Borrow">
+                                                <i class="fas fa-hand-holding"></i>
+                                            </a>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="9" class="text-center py-4">
+                                <div class="alert alert-info mb-0">
+                                    <i class="fas fa-info-circle fa-lg me-2"></i> No books found in the catalog.
+                                    @if (TempData.ContainsKey("UserId") && (TempData["UserRole"].ToString() == "Admin" || TempData["UserRole"].ToString() == "Librarian"))
+                                    {
+                                        <span>Please <a asp-action="Create" class="alert-link">add some books</a> to get started.</span>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Initialize tooltips
+        document.addEventListener('DOMContentLoaded', function() {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+        });
+    </script>
+}
+
+@{
+    // Keep the TempData alive for next request
+    if (TempData.ContainsKey("UserId"))
+    {
+        TempData.Keep("UserId");
+        TempData.Keep("UserName");
+        TempData.Keep("UserRole");
+    }
+}

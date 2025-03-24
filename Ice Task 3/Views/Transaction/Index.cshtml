@@ -1,0 +1,181 @@
+﻿@model IEnumerable<Ice_Task_3.Models.Transaction>
+
+@{
+    ViewData["Title"] = "Transactions";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-exchange-alt"></i> Transactions</h1>
+    <div>
+        <a asp-action="Borrow" class="btn btn-success me-2">
+            <i class="fas fa-book"></i> Borrow Book
+        </a>
+        <a asp-action="Overdue" class="btn btn-warning">
+            <i class="fas fa-exclamation-circle"></i> Overdue Books
+        </a>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="fas fa-list"></i> All Transactions</h5>
+    </div>
+    <div class="card-body p-0">
+        @if (Model == null || !Model.Any())
+        {
+            <div class="alert alert-info m-3 mb-0">
+                <i class="fas fa-info-circle"></i> No transactions found. Start by <a asp-action="Borrow" class="alert-link">borrowing a book</a>.
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th><i class="fas fa-book"></i> Book</th>
+                            <th><i class="fas fa-user"></i> Member</th>
+                            <th><i class="fas fa-calendar-plus"></i> Borrow Date</th>
+                            <th><i class="fas fa-calendar-times"></i> Due Date</th>
+                            <th><i class="fas fa-calendar-check"></i> Return Date</th>
+                            <th><i class="fas fa-info-circle"></i> Status</th>
+                            <th><i class="fas fa-cogs"></i> Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@(item.Book != null ? item.Book.Title : "Unknown")</td>
+                                <td>@(item.User != null ? $"{item.User.FirstName} {item.User.LastName}" : "Unknown")</td>
+                                <td>@item.BorrowDate.ToShortDateString()</td>
+                                <td>
+                                    @if (item.DueDate < DateTime.Now && !item.IsReturned)
+                                    {
+                                        <span class="text-danger fw-bold">@item.DueDate.ToShortDateString()</span>
+                                    }
+                                    else
+                                    {
+                                        @item.DueDate.ToShortDateString()
+                                    }
+                                </td>
+                                <td>
+                                    @(item.ReturnDate.HasValue ? item.ReturnDate.Value.ToShortDateString() : "-")
+                                </td>
+                                <td>
+                                    @if (item.IsReturned)
+                                    {
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-check-circle"></i> Returned
+                                        </span>
+                                    }
+                                    else if (item.DueDate < DateTime.Now)
+                                    {
+                                        <span class="badge bg-danger">
+                                            <i class="fas fa-exclamation-triangle"></i> Overdue
+                                            (@((DateTime.Now - item.DueDate).Days)d)
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-primary">
+                                            <i class="fas fa-clock"></i> Borrowed
+                                        </span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info" data-bs-toggle="tooltip" title="View Details">
+                                            <i class="fas fa-info-circle"></i>
+                                        </a>
+                                        @if (!item.IsReturned)
+                                        {
+                                            <a asp-action="Return" asp-route-id="@item.Id" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="Return Book">
+                                                <i class="fas fa-undo"></i>
+                                            </a>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+    <div class="card-footer">
+        <div class="d-flex justify-content-between align-items-center">
+            <small class="text-muted"><i class="fas fa-info-circle"></i> Showing all transactions</small>
+            @if (Model != null && Model.Any())
+            {
+                <div>
+                    <span class="badge bg-success me-2">
+                        <i class="fas fa-check-circle"></i> Returned: @Model.Count(t => t.IsReturned)
+                    </span>
+                    <span class="badge bg-primary me-2">
+                        <i class="fas fa-clock"></i> Active: @Model.Count(t => !t.IsReturned && t.DueDate >= DateTime.Now)
+                    </span>
+                    <span class="badge bg-danger">
+                        <i class="fas fa-exclamation-triangle"></i> Overdue: @Model.Count(t => !t.IsReturned && t.DueDate < DateTime.Now)
+                    </span>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm mt-4">
+    <div class="card-header bg-light">
+        <h5 class="mb-0"><i class="fas fa-info-circle"></i> Transaction Information</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-book"></i> Borrowing</h5>
+                        <p class="card-text">Members can borrow books for a standard period of 14 days. To borrow a book, click the "Borrow Book" button.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-undo"></i> Returning</h5>
+                        <p class="card-text">Books should be returned on or before the due date. To return a book, click the return button next to the transaction.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-exclamation-circle"></i> Overdue Books</h5>
+                        <p class="card-text">Books returned after the due date will incur a fine of $1 per day. Please return books on time.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Initialize tooltips
+        document.addEventListener('DOMContentLoaded', function() {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+        });
+    </script>
+}
+
+@{
+    // Keep the TempData alive for next request
+    if (TempData.ContainsKey("UserId"))
+    {
+        TempData.Keep("UserId");
+        TempData.Keep("UserName");
+        TempData.Keep("UserRole");
+    }
+}

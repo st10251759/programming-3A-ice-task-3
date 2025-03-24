@@ -1,0 +1,65 @@
+﻿@model Ice_Task_3.Models.Transaction
+
+@{
+    ViewData["Title"] = "Borrow Book";
+}
+
+<h1>Borrow Book</h1>
+
+<hr />
+
+@if (ViewBag.Debug != null)
+{
+    <div class="alert alert-info">
+        <h4>Debug Information:</h4>
+        <ul>
+            @foreach (var message in ViewBag.Debug)
+            {
+                <li>@message</li>
+            }
+        </ul>
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="Borrow" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="BookId" class="control-label">Book</label>
+                <select asp-for="BookId" class="form-control" asp-items="ViewBag.Books"></select>
+                <span asp-validation-for="BookId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-2">
+                <label asp-for="UserId" class="control-label">Member</label>
+                <select asp-for="UserId" class="form-control" asp-items="ViewBag.Users"></select>
+                <span asp-validation-for="UserId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-2">
+                <label asp-for="DueDate" class="control-label">Due Date</label>
+                <input asp-for="DueDate" class="form-control" type="date" value="@DateTime.Now.AddDays(14).ToString("yyyy-MM-dd")" />
+                <span asp-validation-for="DueDate" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-2">
+                <label asp-for="Notes" class="control-label">Notes</label>
+                <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Notes" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-3">
+                <input type="submit" value="Borrow" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
